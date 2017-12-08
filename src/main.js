@@ -1,12 +1,17 @@
+import 'babel-polyfill'
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import FastClick from 'fastclick'
+// import store from './store'
 
-Vue.config.productionTip = false
+import 'common/stylus/index.styl'
 
-/* eslint-disable no-new */
+FastClick.attach(document.body)
+
 new Vue({
-  el: '#app',
-  router,
-  render: h => h(App)
+    el: '#app',
+    router,
+    // store,
+    render: h => h(App)
 })
