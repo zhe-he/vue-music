@@ -9,8 +9,8 @@
 </template>
 
 <script type="text/ecmascript-6">
-    import MHeader from 'components/m-header'
-    import Tab from 'components/tab'
+    import MHeader from '@/components/m-header'
+    import Tab from '@/components/tab'
 
     export default {
         components: {
