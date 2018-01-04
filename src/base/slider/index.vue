@@ -3,15 +3,25 @@
         <div class="slider-group" ref="sliderGroup">
             <slot></slot>
         </div>
-        <div class="dots"></div>
+        <div class="dots">
+            <span class="dot" v-for="(item, index) in dots" :class="{'active': currentPageIndex === index}"></span>
+        </div>
     </div>
 </template>
 
 <script type="text/ecmascript-6">
-    // import BScroll from 'better-scroll'
+    import BScroll from 'better-scroll'
     import {addClass} from '@/common/js/dom'
 
     export default {
+        data() {
+            return {
+                // slider: null,
+                // children: [],
+                dots: [],
+                currentPageIndex: 0
+            }
+        },
         props: {
             loop: {
                 type: Boolean,
@@ -29,27 +39,71 @@
         mounted() {
             this.$nextTick(() => {
                 this.setSildeWidth();
+                this.initDots();
                 this.initSlider();
-            })
+
+                if (this.autoPlay) {
+                    this.play();
+                }
+            });
+            // const resize = 'onorientationchange' in window ? 'orientationchange' : 'resize';
+            window.addEventListener('resize', () => {
+                this.setSildeWidth(true);
+                this.slider.refresh();
+            });
         },
         methods: {
-            setSildeWidth() {
-                let children = this.$refs.sliderGroup.children;
+            setSildeWidth(isResize) {
+                this.children = this.$refs.sliderGroup.children;
                 let width = 0;
                 let sliderWidth = this.$refs.slider.clientWidth;
-                for (var i = 0; i < children.length; i++) {
-                    addClass(children[i], 'slider-item');
-                    children[i].style.width = sliderWidth + 'px';
+                for (var i = 0; i < this.children.length; i++) {
+                    addClass(this.children[i], 'slider-item');
+                    this.children[i].style.width = sliderWidth + 'px';
                     width += sliderWidth;
                 }
-                if (this.loop) {
+                if (this.loop && !isResize) {
                     width += 2 * sliderWidth;
                 }
                 this.$refs.sliderGroup.style.width = width + 'px';
             },
+            initDots(){
+                this.dots = new Array(this.children.length);
+            },
             initSlider() {
-
+                this.slider = new BScroll(this.$refs.slider, {
+                    scrollX: true,
+                    scrollY: false,
+                    snap: {
+                        loop: this.loop,
+                        threshold: 0.3
+                    },
+                    snapSpeed: 400,
+                    momentum: false
+                });
+                this.slider.on('scrollEnd', () => {
+                    this.currentPageIndex = this.slider.getCurrentPage().pageX;
+                    if (this.loop) {
+                        this.currentPageIndex--;
+                    }
+                    if (this.autoPlay) {
+                        this.play();
+                    }
+                });
+            },
+            play(){
+                clearTimeout(this.sliderTimer);
+                this.sliderTimer = setTimeout(() => {
+                    let index = this.currentPageIndex + 1;
+                    if (this.loop) {
+                        index++;
+                    }
+                    this.slider.goToPage(index, 0, 400);
+                }, 3000);
             }
+        },
+        destroyed() {
+            clearTimeout(this.sliderTimer);
         }
     }
 </script>
