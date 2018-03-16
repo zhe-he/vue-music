@@ -16,14 +16,22 @@
                 <li v-for="(item, index) in shortcutList" :data-index="index" class="item" :class="{'current':currentIndex==index}">{{item}}</li>
             </ul>
         </div>
+        <div class="list-fixed" v-show="fixedTitle" ref="fixed">
+            <p class="fixed-title">{{fixedTitle}}</p>
+        </div>
+        <div class="loading-container" v-show="!data.length">
+            <loading></loading>
+        </div>
     </scroll>
 </template>
 
 <script type="text/ecmascript-6">
     import Scroll from '@/base/scroll'
     import { getData } from '@/common/js/dom'
+    import Loading from '@/base/loading'
 
     const ANCHOR_HEIGHT = 18;
+    const TITLE_HEIGHT = 30;
 
     export default {
         props: {
@@ -35,7 +43,8 @@
         data() {
             return {
                 scrollY: -1,
-                currentIndex: 0
+                currentIndex: 0,
+                diff: -1
             }
         },
         created() {
@@ -62,16 +71,29 @@
                     var h2 = this.listHeight[i + 1];
                     if (-cur >= h1 && -cur < h2) {
                         this.currentIndex = i;
+                        this.diff = cur + h2;
                         return
                     }
                 }
                 // 底部滚动
                 this.currentIndex = this.listHeight.length - 2;
+            },
+            diff(cur) {
+                let fixedTop = (cur < TITLE_HEIGHT && cur > 0) ? cur - TITLE_HEIGHT : 0;
+                if (this.fixedTop === fixedTop) { return }
+                this.fixedTop = fixedTop;
+                this.$refs.fixed.style.transform = `translate3d(0,${fixedTop}px,0)`;
             }
         },
         computed: {
             shortcutList() {
                 return this.data.map(a => a.title.charAt(0))
+            },
+            fixedTitle() {
+                if (this.scrollY > 0) {
+                    return ''
+                }
+                return this.data[this.currentIndex] ? this.data[this.currentIndex].title : ''
             }
         },
         methods: {
@@ -113,7 +135,8 @@
             }
         },
         components: {
-            Scroll
+            Scroll,
+            Loading
         }
     }
 </script>
