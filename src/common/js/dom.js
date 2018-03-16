@@ -14,5 +14,13 @@ export function hasClass(self, className) {
 
 export function removeClass(self, className) {
     var re = new RegExp('\\b' + className + '\\b', 'g')
-    self.className = self.className.replace(re, '')
+    self.className = self.className.replace(re, '');
+}
+
+export function getData(ele, name) {
+    return ele.getAttribute('data-' + name);
+}
+
+export function setData(ele, name) {
+    return ele.setAttribute('data-' + name);
 }

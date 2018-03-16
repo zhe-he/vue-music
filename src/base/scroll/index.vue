@@ -20,6 +20,10 @@
             data: {
                 type: Array,
                 default: null
+            },
+            listenScroll: {
+                type: Boolean,
+                default: false
             }
         },
         mounted() {
@@ -35,10 +39,21 @@
                 this.scroll = new BScroll(this.$refs.wrapper, {
                     probeType: this.probeType,
                     click: this.click
-                })
+                });
+                if (this.listenScroll) {
+                    this.scroll.on('scroll', pos => {
+                        this.$emit('scroll', pos);
+                    })
+                }
             },
             refresh() {
                 this.scroll && this.scroll.refresh();
+            },
+            scrollTo(x, y, time, easing) {
+                this.scroll && this.scroll.scrollTo(x, y, time, easing);
+            },
+            scrollToElement(el, time, offsetX, offsetY, easing) {
+                this.scroll && this.scroll.scrollToElement(el, time, offsetX, offsetY, easing)
             }
         },
         watch: {
