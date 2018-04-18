@@ -5,7 +5,7 @@ import VueLazyload from 'vue-lazyload'
 import App from './App'
 import router from './router'
 import FastClick from 'fastclick'
-// import store from './store'
+import store from './store'
 import '@/common/stylus/index.styl'
 
 if (!window.Promise) {
@@ -14,6 +14,7 @@ if (!window.Promise) {
 
 FastClick.attach(document.body)
 
+Vue.config.productionTip = false;
 Vue.use(VueLazyload, {
     loading: require('@/common/image/default.png')
 })
@@ -21,6 +22,6 @@ Vue.use(VueLazyload, {
 new Vue({
     el: '#app',
     router,
-    // store,
+    store,
     render: h => h(App)
 })
