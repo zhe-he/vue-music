@@ -25,6 +25,7 @@ module.exports = {
         'indent': 'off',
         'space-before-blocks': [0, 'always'],
         'space-before-function-paren': [0, 'always'],
-        'semi': 'off'
+        'semi': 'off',
+        'eol-last': 'off'
     }
 }

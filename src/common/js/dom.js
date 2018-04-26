@@ -24,3 +24,27 @@ export function getData(ele, name) {
 export function setData(ele, name) {
     return ele.setAttribute('data-' + name);
 }
+
+let elementStyle = document.createElement('div').style;
+
+let verdor = (() => {
+    let transformNames = {
+        standard: 'transform',
+        webkit: 'webkitTransform',
+        moz: 'MozTransform',
+        o: 'OTransform',
+        ms: 'msTransform'
+    };
+    for (var key in transformNames) {
+        if (transformNames.hasOwnProperty(key) && transformNames[key] in elementStyle) {
+            return key;
+        }
+    }
+    return false;
+})();
+
+export function prefixStyle(style) {
+    if (!verdor) { return false }
+    if (verdor === 'standard') { return style }
+    return verdor + style.charAt(0).toUpperCase() + style.substr(1);
+}

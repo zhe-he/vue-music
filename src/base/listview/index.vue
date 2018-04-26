@@ -135,6 +135,9 @@
                     listHeight.push(H);
                 }
                 this.listHeight = listHeight;
+            },
+            refresh() {
+                this.$refs.listview.refresh();
             }
         },
         components: {
