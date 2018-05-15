@@ -30,6 +30,7 @@
                 <loading></loading>
             </div>
         </scroll>
+        <router-view></router-view>
     </div>
 </template>
 
@@ -40,6 +41,7 @@
     import Scroll from '@/base/scroll'
     import Loading from '@/base/loading'
     import { playlistMixin } from '@/common/js/mixin'
+    import { mapMutations } from 'vuex'
 
     export default {
         mixins: [playlistMixin],
@@ -78,7 +80,16 @@
                     this.$refs.scroll.refresh();
                     this.checkLoaded = true;
                 }
-            }
+            },
+            selectItem(item) {
+                this.$router.push({
+                    path: 'recommend/' + item.dissid
+                });
+                this.setDisc(item);
+            },
+            ...mapMutations({
+                setDisc: 'SET_DISC'
+            })
         },
         components: {
             Slider,
