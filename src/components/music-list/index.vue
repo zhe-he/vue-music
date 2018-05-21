@@ -17,7 +17,7 @@
         <div class="bg-layer" ref="bglayer"></div>
         <scroll :data="songs" :probe-type="probeType" @scroll="scroll" :listen-scroll="listenScroll" class="list" ref="list">
             <div class="song-list-wrapper">
-                <song-list @select="selectItem" :songs="songs"></song-list>
+                <song-list :rank="rank" @select="selectItem" :songs="songs"></song-list>
             </div>
             <div class="loading-container" v-show="!songs.length">
                 <loading></loading>
@@ -42,13 +42,20 @@
         mixins: [playlistMixin],
         props: {
             title: {
-                    type: String
+                type: String,
+                default: ''
             },
             bgImage: {
-                    type: String
+                type: String,
+                default: ''
             },
             songs: {
-                    type: Array
+                type: Array,
+                default: []
+            },
+            rank: {
+                type: Boolean,
+                default: false
             }
         },
         data() {
