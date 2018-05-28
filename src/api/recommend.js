@@ -5,7 +5,7 @@ import {commonParams, options} from './config'
 export function getRecommend() {
     const url = 'https://c.y.qq.com/musichall/fcgi-bin/fcg_yqqhomepagerecommend.fcg'
 
-    var params = Object.assign(commonParams, {
+    var params = Object.assign({}, commonParams, {
         'uin': '',
         'platform': 'h5',
         'needNewCode': 1
@@ -15,7 +15,7 @@ export function getRecommend() {
 
 export function getDiscList() {
     const url = 'api/getDiscList';
-    var params = Object.assign(commonParams, {
+    var params = Object.assign({}, commonParams, {
         platform: 'yqq',
         hostUin: 0,
         sin: 0,

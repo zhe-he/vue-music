@@ -9,7 +9,6 @@ export function getTopList() {
         needNewCode: 1,
         platform: 'h5'
     })
-
     return jsonp(url, data, options)
 }
 

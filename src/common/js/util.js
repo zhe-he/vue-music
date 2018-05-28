@@ -25,3 +25,13 @@ export function shuffle (arr) {
 export function findIndex(parent, child, id = 'id') {
     return parent.findIndex(item => item[id] === child[id]);
 }
+
+export function debounce(func, delay) {
+    let timer;
+    return function (...args) {
+        if (timer) { clearTimeout(timer) }
+        timer = setTimeout(() => {
+            func.apply(this, args);
+        }, delay);
+    }
+}
