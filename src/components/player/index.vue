@@ -209,9 +209,11 @@
                 this.step(this.currentIndex + 1);
             },
             step(index) {
+                clearTimeout(this.errorTimer);
                 if (!this.songReady) { return }
                 if (this.playlist.length === 1) {
                     this.loop();
+                    return
                 } else {
                     if (index === -1) {
                         index = this.playlist.length - 1;
@@ -238,9 +240,11 @@
             },
             sError() {
                 this.songReady = true;
-                if (this.currentLyric) {
+                clearTimeout(this.errorTimer);
+                this.errorTimer = setTimeout(() => {
                     this.currentLyric.stop();
-                }
+                    this.step(this.currentIndex + 1);
+                }, 5000);
             },
             end() {
                 if (this.mode === playMode.loop) {
@@ -263,8 +267,9 @@
                 }
             },
             getLyric() {
-                this.currentSong.getLyric().then(res => {
-                    this.currentLyric = new Lyric(res, this.handlerLyric);
+                this.currentSong.getLyric().then(lyric => {
+                    if (this.currentSong.lyric !== lyric) { return }
+                    this.currentLyric = new Lyric(lyric, this.handlerLyric);
                     if (this.playing) {
                         this.currentLyric.play()
                     }
@@ -353,7 +358,8 @@
                     this.playingLyric = '';
                     this.currentLineNum = 0;
                 }
-                setTimeout(() => {
+                clearTimeout(this.timer);
+                this.timer = setTimeout(() => {
                     if (this.playing) { this.$refs.audio.play() }
                     this.getLyric();
                 }, 1000);
