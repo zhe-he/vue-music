@@ -6,6 +6,9 @@ const SEARCH_MAX_LENGTH = 15;
 const PLAY_KEY = '__play__';
 const PLAY_MAX_LENGTH = 200;
 
+const FAVORITE_KEY = '__favorite__';
+const FAVORITE_MAX_LENGTH = 200;
+
 function insertArray(arr, value, func, maxLen) {
     let index = arr.findIndex(func);
     if (index === 0) { return }
@@ -54,7 +57,25 @@ export function loadPlay() {
 
 export function savePlay(value) {
     let play = store.get(PLAY_KEY, []);
-    insertArray(play, value, item => item === value, PLAY_MAX_LENGTH);
+    insertArray(play, value, item => item.id === value.id, PLAY_MAX_LENGTH);
     store.set(PLAY_KEY, play);
     return play;
+}
+
+export function loadFavorite() {
+    return store.get(FAVORITE_KEY, []);
+}
+
+export function saveFavorite(value) {
+    let favorite = store.get(FAVORITE_KEY, []);
+    insertArray(favorite, value, item => item.id === value.id, FAVORITE_MAX_LENGTH);
+    store.set(FAVORITE_KEY, favorite);
+    return favorite;
+}
+
+export function deleteFavorite(value) {
+    let favorite = store.get(FAVORITE_KEY, []);
+    deleteFromArray(favorite, item => item.id === value.id);
+    store.set(FAVORITE_KEY, favorite);
+    return favorite;
 }
