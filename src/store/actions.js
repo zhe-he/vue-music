@@ -1,7 +1,7 @@
 import * as types from './mutation-types'
 import { playMode } from '@/common/js/config'
 import { shuffle, findIndex } from '@/common/js/util'
-import { saveSearch, deleteSearch, clearSearch } from '@/common/js/cache'
+import { saveSearch, deleteSearch, clearSearch, savePlay } from '@/common/js/cache'
 
 export const selectSong = ({commit, state}, {list, index}) => {
     if (state.mode === playMode.random) {
@@ -29,7 +29,9 @@ export const randomPlay = ({commit}, {list}) => {
 }
 
 export const insertSong = ({commit, state}, song) => {
-    let { playlist, sequenceList, currentIndex } = JSON.parse(JSON.stringify(state));
+    let playlist = state.playlist.slice();
+    let sequenceList = state.sequenceList.slice();
+    let currentIndex = state.currentIndex;
     let currentSong = playlist[currentIndex]
 
     let fpIndex = findIndex(playlist, song);
@@ -62,6 +64,30 @@ export const insertSong = ({commit, state}, song) => {
     commit(types.SET_FULL_SCREEN, true);
 }
 
+export const deleteSong = ({commit, state}, song) => {
+    let playlist = state.playlist.slice();
+    let sequenceList = state.sequenceList.slice();
+    let currentIndex = state.currentIndex;
+    let fpIndex = findIndex(playlist, song);
+    let fsIndex = findIndex(sequenceList, song);
+    playlist.splice(fpIndex, 1);
+    sequenceList.splice(fsIndex, 1);
+    if (currentIndex > fpIndex || currentIndex === playlist.length) {
+        currentIndex--;
+    }
+    commit(types.SET_PLAYLIST, playlist);
+    commit(types.SET_SEQUENCE_LIST, sequenceList);
+    commit(types.SET_CURRENT_INDEX, currentIndex);
+    commit(types.SET_PLAYING_STATE, playlist.length > 0);
+}
+
+export const deleteSongList = ({commit}) => {
+    commit(types.SET_PLAYLIST, []);
+    commit(types.SET_SEQUENCE_LIST, []);
+    commit(types.SET_CURRENT_INDEX, -1);
+    commit(types.SET_PLAYING_STATE, false);
+}
+
 export const saveSearchHistory = ({commit}, song) => {
     commit(types.SET_SEARCH_HISTORY, saveSearch(song));
 }
@@ -72,4 +98,8 @@ export const deleteSearchHistory = ({commit}, song) => {
 
 export const clearSearchHistory = ({commit}) => {
     commit(types.SET_SEARCH_HISTORY, clearSearch());
+}
+
+export const savePlayHistory = ({commit}, song) => {
+    commit(types.SET_PLAY_HISTORY, savePlay(song));
 }

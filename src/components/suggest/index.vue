@@ -36,7 +36,7 @@
                 type: String,
                 default: ''
             },
-            zhida: {
+            showSinger: {
                 type: Boolean,
                 default: true
             }
@@ -54,7 +54,7 @@
             search(query) {
                 this.hasMore = true;
                 this.page = 1;
-                search(query, this.page, this.zhida, perpage).then(res => {
+                search(query, this.page, this.showSinger, perpage).then(res => {
                     if (res.code === ERR_OK) {
                         this.result = this.genResult(res.data);
                         this.checkMore(res.data.song);
@@ -64,7 +64,7 @@
             searchMore() {
                 if (!this.hasMore) { return }
                 this.page++;
-                search(this.query, this.page, this.zhida, perpage).then(res => {
+                search(this.query, this.page, this.showSinger, perpage).then(res => {
                     if (res.code === ERR_OK) {
                         this.result = this.result.concat(this.genResult(res.data));
                         this.checkMore(res.data.song);

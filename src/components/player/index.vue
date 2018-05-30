@@ -82,31 +82,35 @@
                         <i @click.stop="togglePlaying" class="icon-mini" :class="miniIcon"></i>
                     </progress-circle>
                 </div>
-                <div class="control">
+                <div class="control" @click.stop="showPlaylist">
                     <i class="icon-playlist"></i>
                 </div>
             </div>
         </transition>
+        <playlist ref="playlist"></playlist>
         <audio ref="audio" autoplay="true" :src="currentSong.url" @play="sReady" @error="sError" @timeupdate="timeupdate" @ended="end"></audio>
     </div>
 
 </template>
 
 <script type="text/ecmascript-6">
-    import { mapGetters, mapMutations } from 'vuex'
+    import { mapGetters, mapMutations, mapActions } from 'vuex'
     import animations from 'create-keyframe-animation'
     import Lyric from 'lyric-parser'
     import { prefixStyle } from '@/common/js/dom'
-    import { pad, shuffle, findIndex } from '@/common/js/util'
+    import { pad } from '@/common/js/util'
     import { playMode } from '@/common/js/config'
+    import { playerMixin } from '@/common/js/mixin'
     import ProgressBar from '@/base/progress-bar'
     import ProgressCircle from '@/base/progress-circle'
     import Scroll from '@/base/scroll'
+    import Playlist from '@/components/playlist'
     const transform = prefixStyle('transform');
     const transition = prefixStyle('transition');
     const transitionDuration = prefixStyle('transitionDuration');
 
     export default {
+        mixins: [playerMixin],
         data() {
             return {
                 songReady: false,
@@ -118,9 +122,6 @@
             }
         },
         computed: {
-            modeClass() {
-                return this.mode === playMode.sequence ? 'icon-sequence' : this.mode === playMode.loop ? 'icon-loop' : 'icon-random'
-            },
             cdClass() {
                 return this.playing ? 'play' : 'play pause'
             },
@@ -136,7 +137,7 @@
             percent() {
                 return this.currentTime / this.currentSong.duration
             },
-            ...mapGetters(['playlist', 'fullScreen', 'currentSong', 'playing', 'currentIndex', 'mode', 'sequenceList'])
+            ...mapGetters(['fullScreen', 'playing', 'currentIndex'])
         },
         filters: {
             format(timestamp) {
@@ -233,6 +234,7 @@
             },
             sReady() {
                 this.songReady = true;
+                this.savePlayHistory(this.currentSong);
             },
             sError() {
                 this.songReady = true;
@@ -260,14 +262,6 @@
                     this.currentLyric.seek(currentTime * 1000);
                 }
             },
-            changeMode() {
-                let mode = (this.mode + 1) % 3;
-                this.setPlayMode(mode);
-                let playlist = mode === playMode.random ? shuffle(this.sequenceList) : this.sequenceList;
-                let index = findIndex(playlist, this.currentSong);
-                this.setCurrentIndex(index);
-                this.setPlaylist(playlist);
-            },
             getLyric() {
                 this.currentSong.getLyric().then(res => {
                     this.currentLyric = new Lyric(res, this.handlerLyric);
@@ -289,6 +283,9 @@
                     this.$refs.lyricList.scrollTo(0, 0, 1000);
                 }
                 this.playingLyric = txt;
+            },
+            showPlaylist() {
+                this.$refs.playlist.show();
             },
             middleStart(e) {
                 let touch = e.touches[0];
@@ -342,15 +339,13 @@
             },
             ...mapMutations({
                 setFullScreen: 'SET_FULL_SCREEN',
-                setPlayingState: 'SET_PLAYING_STATE',
-                setCurrentIndex: 'SET_CURRENT_INDEX',
-                setPlayMode: 'SET_PLAY_MODE',
-                setSequenceList: 'SET_SEQUENCE_LIST',
-                setPlaylist: 'SET_PLAYLIST'
-            })
+                setSequenceList: 'SET_SEQUENCE_LIST'
+            }),
+            ...mapActions(['savePlayHistory'])
         },
         watch: {
             currentSong(newVal, oldVal) {
+                if (!newVal.id) { return }
                 if (newVal.id === oldVal.id) { return }
                 if (this.currentLyric) {
                     this.currentLyric.stop();
@@ -359,7 +354,7 @@
                     this.currentLineNum = 0;
                 }
                 setTimeout(() => {
-                    this.$refs.audio.play();
+                    if (this.playing) { this.$refs.audio.play() }
                     this.getLyric();
                 }, 1000);
             },
@@ -373,7 +368,8 @@
         components: {
             ProgressBar,
             ProgressCircle,
-            Scroll
+            Scroll,
+            Playlist
         }
     }
 </script>
