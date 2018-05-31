@@ -99,6 +99,7 @@
                     arr.push({ ...data.zhida, type: TYPE_SINGER });
                 }
                 if (data.song) {
+                    console.log(data);
                     arr = arr.concat(this.normalizeSongs(data.song.list));
                 }
                 return arr;

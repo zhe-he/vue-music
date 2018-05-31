@@ -1,17 +1,19 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Recommend from '@/components/recommend'
-import Rank from '@/components/rank'
-import Singer from '@/components/singer'
-import Search from '@/components/search'
-import SingerDetail from '@/components/singer-detail'
-import Disc from '@/components/disc'
-import TopList from '@/components/top-list'
-import UserCenter from '@/components/user-center'
 
-Vue.use(Router)
+const Recommend = () => import(/* webpackChunkName: "recommend" */ '@/components/recommend')
+const Rank = () => import(/* webpackChunkName: "rank" */ '@/components/rank')
+const Singer = () => import(/* webpackChunkName: "singer" */ '@/components/singer')
+const Search = () => import(/* webpackChunkName: "search" */ '@/components/search')
+const SingerDetail = () => import(/* webpackChunkName: "singer-detail" */ '@/components/singer-detail')
+const Disc = () => import(/* webpackChunkName: "disc" */ '@/components/disc')
+const TopList = () => import(/* webpackChunkName: "top-list" */ '@/components/top-list')
+const UserCenter = () => import(/* webpackChunkName: "user-center" */ '@/components/user-center')
+
+Vue.use(Router);
 
 export default new Router({
+    mode: 'history',
     routes: [
         {
             path: '/',

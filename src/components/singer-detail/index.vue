@@ -37,8 +37,8 @@
                         let list = res.data.list;
                         let songs = [];
                         list.forEach(item => {
-                            let {musicData} = item;
-                            if (musicData && musicData.songid && musicData.albummid) {
+                            let {musicData, isnew} = item;
+                            if (isnew === 0 && musicData && musicData.songid && musicData.albummid) {
                                 songs.push(createSong(musicData));
                             }
                         });
